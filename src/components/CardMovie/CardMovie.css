@@ -1,0 +1,14 @@
+.CardMovie {
+    /*background-color: gray;*/
+    max-width: 500px;
+    margin: 0 auto 5px;
+    padding: 5px 0;
+    border-radius: 15px;
+    border: 2px solid gray;
+}
+.CardMovie__Title {
+    margin-right: 8px;
+}
+.CardMovie__Rating {
+    color: red;
+}
