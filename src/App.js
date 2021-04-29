@@ -1,8 +1,9 @@
-import logo from './logo.svg';
 import './App.css';
-import {useEffect, useState} from "react";
-import CardMovie from "./components/CardMovie/CardMovie";
+import {useState} from "react";
 import Loader from "./components/Loader/Loader";
+import Button from "./components/Button/Button";
+import ListMovie from "./components/ListMovie/ListMovie";
+import { httpGet  }from "./utils/httpGet";
 
 const baseUrl = "https://api.themoviedb.org/3/"
 
@@ -15,21 +16,20 @@ const App = () => {
     const getItems = (pageNr) => {
         setFetching(true);
         const url =
-            `${baseUrl}discover/movie?sort_by=popularity.desc&page=${pageNr}&api_key=${key}`
+            `${baseUrl}discover/movie?sort_by=popularity.desc&api_key=${key}`
+            // `${baseUrl}discover/movie?sort_by=popularity.desc&page=${key}&api_key=${key}`
 
-        fetch(url).then(resp => resp.json())
-            .then(result => {
-                setTimeout(function(){
-                    setIsLoaded(true);
-                    setItems(result);
-                }, 1500);
-
-            });
+        const pageItems = httpGet(url, 1);
+        console.log(pageItems)
+        if (pageItems.length) {
+            setIsLoaded(true);
+            setItems(pageItems);
+        }
     }
 
     return (
         <div className="App">
-            <h1 className="App__Header">100 titlar</h1>
+            <h1 className="App__Header">Top 100 filmtitlar</h1>
             <div className="App__Controls">
                 <label htmlFor="input" >Api Key: </label>
                 <input
@@ -38,24 +38,11 @@ const App = () => {
                     className="App__Input"
                     name="input"
                     type="text" />
-                <button onClick={getItems}>Hämta filmer</button>
-                {!!key &&
-                [...Array(5)].map((_,i) => (
-                    <button
-                        onClick={(e) => getItems(i+1)}
-                        className="App__PageButton"
-                        key={i}>
-                        {i+1}
-                    </button>
-                ))
-                }
+                <Button onClick={getItems} text="Hämta filmer" />
             </div>
-            {/*<Loader />*/}
             {!!fetching && !isLoaded && <Loader />}
             {!!items?.results?.length &&
-                items.results.map((item, id) => (
-                    <CardMovie {...item} key={id} />
-                ))
+                <ListMovie items={[...items.results]} />
             }
             <footer>"This product uses the TMDb API but is not endorsed or certified by TMDb."</footer>
         </div>
