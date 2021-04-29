@@ -12,6 +12,7 @@ const App = () => {
     const [fetching, setFetching] = useState(false);
     const [key, setKey] = useState(process.env.REACT_APP_API_KEY || '');
     const [isLoaded, setIsLoaded] = useState(false);
+    const [temp, setTemp] = useState({});
 
     const getItems = (pageNr) => {
         setFetching(true);
@@ -26,6 +27,18 @@ const App = () => {
             setItems(pageItems);
         }
     }
+    async function getTemp() {
+        const url =
+            `${baseUrl}discover/movie?sort_by=popularity.desc&api_key=${key}`
+        setTemp({
+            1: await httpGet(url, 1),
+            2: await httpGet(url, 2),
+            3: await httpGet(url, 3),
+            4: await httpGet(url, 4),
+            5: await httpGet(url, 5),
+        });
+    }
+    console.log(temp);
 
     return (
         <div className="App">
@@ -38,7 +51,7 @@ const App = () => {
                     className="App__Input"
                     name="input"
                     type="text" />
-                <Button onClick={getItems} text="Hämta filmer" />
+                <Button onClick={getTemp} text="Hämta filmer" />
             </div>
             {!!fetching && !isLoaded && <Loader />}
             {!!items?.results?.length &&
